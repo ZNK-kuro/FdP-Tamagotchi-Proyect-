@@ -13,9 +13,7 @@
 
   Fecha creación: 2019/04/01
   Fecha última modificación: 2019/04/01
-  Versión: 0.1.1
-
-
+  Versión: 0.1.2
 |#
 
 (define (tamagotchi)
@@ -30,7 +28,9 @@
      (define estaEnfermo false)
      (define necesitaElBaño false)
      
-;                         Funciones
+#|                        Funciones
+    PrintfNveces:
+      Imprime un mensaje N numero de veces.|#
      (define (printfNVeces mensaje N)
        (cond
          [(eq? N 0) void]
@@ -41,69 +41,52 @@
          ]
        )
      )
+
+#|  felicidad+:
+      Suma N a la felicidad pero no permite que el valor de felicidad supere a 10.|#
+     (define (felicidad+ N)
+       (begin
+         (set! felicidad (+ felicidad N))
+         (if (> felicidad 10)
+             (set! felicidad 10)
+             void
+         )
+       )
+     )
+     
+#|  SumaContadores:
+      Suma en 1 al contador de la acción que se ejecuta y le resta 1 a las demás.|#
      (define (sumaContadores num)
        (begin
-         (vector-set! cuentaAcciones accion (+ 1 (vector-ref cuentaAcciones accion)))
-         (if (eq? accion 0)
-             (begin
-               (if (= (vector-ref cuentaAcciones 1) 0)
+         (if (= (vector-ref cuentaAcciones 4) 4) ;Esto evita que el contador de curar sea mayor a 4.
                    void
-                   (vector-set! cuentaAcciones 1 (- (vector-ref cuentaAcciones 1) 1)))
-               (if (= (vector-ref cuentaAcciones 2) 0)
+                   (vector-set! cuentaAcciones accion (+ (vector-ref cuentaAcciones accion) 2))
+         )
+         (if (= (vector-ref cuentaAcciones 0) 0)
                    void
-                   (vector-set! cuentaAcciones 2 (- (vector-ref cuentaAcciones 2) 1)))
-               (if (= (vector-ref cuentaAcciones 3) 0)
+                   (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1))
+         )
+         (if (= (vector-ref cuentaAcciones 1) 0)
                    void
-                   (vector-set! cuentaAcciones 3 (- (vector-ref cuentaAcciones 3) 1))))
-             (if (eq? accion 1)
-                 (begin
-                   (if (= (vector-ref cuentaAcciones 0) 0)
-                       void
-                       (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
-                   (if (= (vector-ref cuentaAcciones 2) 0)
-                       void
-                       (vector-set! cuentaAcciones 2 (- (vector-ref cuentaAcciones 2) 1)))
-                   (if (= (vector-ref cuentaAcciones 3) 0)
-                       void
-                       (vector-set! cuentaAcciones 3 (- (vector-ref cuentaAcciones 3) 1))))
-                 (if (eq? accion 2)
-                     (begin
-                       (if (= (vector-ref cuentaAcciones 0) 0)
-                           void
-                           (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
-                       (if (= (vector-ref cuentaAcciones 1) 0)
-                           void
-                           (vector-set! cuentaAcciones 1 (- (vector-ref cuentaAcciones 1) 1)))
-                       (if (= (vector-ref cuentaAcciones 3) 0)
-                           void
-                           (vector-set! cuentaAcciones 3 (- (vector-ref cuentaAcciones 3) 1))))
-                     (if (eq? accion 3)
-                         (begin
-                           (if (= (vector-ref cuentaAcciones 0) 0)
-                               void
-                               (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
-                           (if (= (vector-ref cuentaAcciones 1) 0)
-                               void
-                               (vector-set! cuentaAcciones 1 (- (vector-ref cuentaAcciones 1) 1)))
-                           (if (= (vector-ref cuentaAcciones 2) 0)
-                               void
-                               (vector-set! cuentaAcciones 2 (- (vector-ref cuentaAcciones 2) 1))))
-                         (if (eq? accion 4)
-                             (begin
-                               (if (= (vector-ref cuentaAcciones 0) 0)
-                                   void
-                                   (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
-                               (if (= (vector-ref cuentaAcciones 1) 0)
-                                   void
-                                   (vector-set! cuentaAcciones 1 (- (vector-ref cuentaAcciones 1) 1)))
-                               (if (= (vector-ref cuentaAcciones 2) 0)
-                                   void
-                                   (vector-set! cuentaAcciones 2 (- (vector-ref cuentaAcciones 2) 1)))
-                               (if (= (vector-ref cuentaAcciones 3) 0)
-                                   void
-                                   (vector-set! cuentaAcciones 3 (- (vector-ref cuentaAcciones 3) 1))))
-                             void)))))))
-     #|-------------------------------------------------------------------------------------------------|#
+                   (vector-set! cuentaAcciones 1 (- (vector-ref cuentaAcciones 1) 1))
+         )
+         (if (= (vector-ref cuentaAcciones 2) 0)
+                   void
+                   (vector-set! cuentaAcciones 2 (- (vector-ref cuentaAcciones 2) 1))
+         )
+         (if (= (vector-ref cuentaAcciones 3) 0)
+                   void
+                   (vector-set! cuentaAcciones 3 (- (vector-ref cuentaAcciones 3) 1))
+         )
+         (if (= (vector-ref cuentaAcciones 4) 0)
+                   void
+                   (vector-set! cuentaAcciones 4 (- (vector-ref cuentaAcciones 4) 1))
+         )
+       )
+     )
+     
+#|  Cerrar:
+      Finaliza el programa, ya sea porque la mascota muere o el jugador se retira.|#
      (define (cerrar num)
        (begin
          (printf "\nEres un mal amo.")
@@ -113,26 +96,33 @@
            [(eq? num 2) (display "\nTu mascota murió por derrame cerebral.")]
            [(eq? num 3) (display "\nTu mascota murió por falla renal.")]
            [(eq? num 5) (display "\nHas abandonado a tu mascota.")]
+           [else void]
          )
        )
      )
      #|-------------------------------------------------------------------------------------------------|#
      (define (comer)
        (begin
-         (if
-          (= (vector-ref cuentaAcciones accion) 0)
-          (begin 
-            (set! felicidad(+ felicidad 1))
-            (printf "\nBuena comida."))
-          (if (= (vector-ref cuentaAcciones accion) 1)
-              (printf "\nEstoy satisfecho.")
-              (if (= (vector-ref cuentaAcciones accion) 2)
-                  (begin
-                    (set! felicidad(- felicidad 1))
-                    (printf "\nNecesito ir al baño, no me siento muy bien.")
-                    (set! necesitaElBaño true))
-                  (set! causaDeMuerte accion))))
-         (sumaContadores accion)))
+         (if (= (vector-ref cuentaAcciones accion) 0)
+             (begin 
+               (felicidad+ 1)
+               (printf "\nBuena comida.")
+             )
+             (if (= (vector-ref cuentaAcciones accion) 1)
+                 (printf "\nEstoy satisfecho.")
+                 (if (= (vector-ref cuentaAcciones accion) 2)
+                     (begin
+                       (set! felicidad(- felicidad 1))
+                       (printf "\nNecesito ir al baño, no me siento muy bien.")
+                       (set! necesitaElBaño true)
+                     )
+                     (set! causaDeMuerte accion)
+                 )
+             )
+         )
+         (sumaContadores accion)
+       )
+     )
      ;si no lo lleva inmediatamente le disminuye en 2 la felicidad.
 #|-------------------------------------------------------------------------------------------------|#
      (define (jugar)
@@ -141,11 +131,11 @@
          (if
           (= (vector-ref cuentaAcciones accion) 0)
           (begin 
-            (set! felicidad(+ felicidad 2))
+            (felicidad+ 2)
             (display "\nQue divertido."))
           (if (= (vector-ref cuentaAcciones accion) 1)
               (begin
-                (set! felicidad (+ felicidad 1))
+                (felicidad+ 1)
                 (display "\nEstoy cansado."))
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
@@ -157,21 +147,28 @@
      ;Escuchar música una vez aumenta en 2 la felicidad, otra vez le aumenta en 1, y una tercera vez disminuye en 1, lo enferma, debe curarlo.
      (define (musica)
        (begin
-         (if
-          (= (vector-ref cuentaAcciones accion) 0)
-          (begin 
-            (set! felicidad(+ felicidad 2))
-            (display "\nTiene buen ritmo."))
-          (if (= (vector-ref cuentaAcciones accion) 1)
-              (begin
-                (set! felicidad (+ felicidad 1))
-                (display "\nEstoy satisfecho."))
-              (if (= (vector-ref cuentaAcciones accion) 2)
-                  (begin
-                    (set! felicidad(- felicidad 1))
-                    (printf "\nNecesito curarme, me duele la cabeza."))
-                  (set! causaDeMuerte accion))))
-         (sumaContadores accion)))
+         (if (= (vector-ref cuentaAcciones accion) 0)
+             (begin 
+               (felicidad+ 2)
+               (display "\nTiene buen ritmo.")
+             )
+             (if (= (vector-ref cuentaAcciones accion) 1)
+                 (begin
+                   (felicidad+ 1)
+                   (display "\nEstoy satisfecho.")
+                 )
+                 (if (= (vector-ref cuentaAcciones accion) 2)
+                     (begin
+                       (set! felicidad(- felicidad 1))
+                       (printf "\nNecesito curarme, me duele la cabeza.")
+                     )
+                  (set! causaDeMuerte accion)
+                 )
+             )
+         )
+         (sumaContadores accion)
+       )
+     )
 #|-------------------------------------------------------------------------------------------------|#
      ;El baño le aumenta la felicidad en 2, la segunda vez no lo afecta y la tercera le disminuye en 1 enfermándolo, debe curarlo.
      (define (baño)
@@ -181,11 +178,14 @@
      (define (curar)
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
-             (set! felicidad (+ felicidad 3))
-             void)
+             (felicidad+ 3)
+             void
+         )
          (display "\nEstoy sano.")
          (set! estaEnfermo false)
-         (sumaContadores accion)))
+         (sumaContadores accion)
+       )
+     )
 #|-------------------------------------------------------------------------------------------------|#
      (define mostrarmenu #f)
      (define (menu)
@@ -240,32 +240,26 @@ felicidad:
                  )
                  void
              )
-             
-
-             
-             
-             
-             
-             (begin (set! accion (- (read) 1))
-                    (cond
-                      [(= 0 accion) (begin (comer)
-                                           (menu))]
-                      [(= 1 accion) (begin (jugar)
-                                           (menu))]
-                      [(= 2 accion) (begin (musica)
-                                           (menu))]
-                      [(= 3 accion) (begin (baño)
-                                           (menu))]
-                      [(= 4 accion) (begin (curar)
-                                           (menu))]
-                      [(= 5 accion) (begin (cerrar 5))]
-                      [else (begin
-                              (printf "no entiendo que dices")
-                              (menu)
-                            )
-                      ]
-                    )
+             (set! accion (- (read) 1))
+             (cond
+               [(= 0 accion) (begin (comer)
+                                    (menu))]
+               [(= 1 accion) (begin (jugar)
+                                    (menu))]
+               [(= 2 accion) (begin (musica)
+                                    (menu))]
+               [(= 3 accion) (begin (baño)
+                                    (menu))]
+               [(= 4 accion) (begin (curar)
+                                    (menu))]
+               [(= 5 accion) (begin (cerrar 5))]
+               [else (begin
+                       (printf "no entiendo que dices")
+                       (menu)
+                     )
+               ]
              )
+             
            )
        )
      )
