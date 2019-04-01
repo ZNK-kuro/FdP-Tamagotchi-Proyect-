@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname Tamagotchi) (read-case-sensitive #t) (teachpacks ((lib "image.rkt" "teachpack" "2htdp") (lib "universe.rkt" "teachpack" "2htdp"))) (htdp-settings #(#t constructor repeating-decimal #t #t none #f ((lib "image.rkt" "teachpack" "2htdp") (lib "universe.rkt" "teachpack" "2htdp")) #f)))
+#reader(lib "htdp-advanced-reader.ss" "lang")((modname tamagotchi) (read-case-sensitive #t) (teachpacks ((lib "image.rkt" "teachpack" "2htdp") (lib "universe.rkt" "teachpack" "2htdp"))) (htdp-settings #(#t constructor repeating-decimal #t #t none #f ((lib "image.rkt" "teachpack" "2htdp") (lib "universe.rkt" "teachpack" "2htdp")) #f)))
 #|
   PROYECTO FDP - TAMAGOTCHI
   Archivo: Tamagotchi.rkt
@@ -21,7 +21,6 @@
 (define (tamagotchi)
   (local
     (
-;                         Variables
      (define accs (vector "comer" "jugar" "musica" "baño" "curar"))
      (define cuentaAcciones (make-vector 5 0))
      (define accion 0)
@@ -29,18 +28,7 @@
      (define causaDeMuerte accion)
      (define estaEnfermo false)
      (define necesitaElBaño false)
-     
-;                         Funciones
-     (define (printfNVeces mensaje N)
-       (cond
-         [(eq? N 0) void]
-         [else (begin
-                 (printf mensaje)
-                 (printfNVeces mensaje (- N 1))
-               )
-         ]
-       )
-     )
+#|-------------------------------------------------------------------------------------------------|#
      (define (sumaContadores num)
        (begin
          (vector-set! cuentaAcciones accion (+ 1 (vector-ref cuentaAcciones accion)))
@@ -110,12 +98,9 @@
          (cond
            [(eq? num 0) (display "\nTu mascota murió por comer demasiado.")]
            [(eq? num 1) (display "\nTu mascota murió de cansancio.")]
-           [(eq? num 2) (display "\nTu mascota murió por derrame cerebral.")]
-           [(eq? num 3) (display "\nTu mascota murió por falla renal.")]
-           [(eq? num 5) (display "\nHas abandonado a tu mascota.")]
-         )
-       )
-     )
+           [(eq? num 2) (display "\nTu mascota murió por derrame cerebral")]
+           [(eq? num 3) (display "\nTu mascota murió por falla renal")]
+           [(eq? num 5) (display "\nTe has ido")])))
      #|-------------------------------------------------------------------------------------------------|#
      (define (comer)
        (begin
@@ -123,13 +108,13 @@
           (= (vector-ref cuentaAcciones accion) 0)
           (begin 
             (set! felicidad(+ felicidad 1))
-            (printf "\nBuena comida."))
+            (display "\nBuena comida."))
           (if (= (vector-ref cuentaAcciones accion) 1)
-              (printf "\nEstoy satisfecho.")
+              (display "\nEstoy satisfecho. ~n")
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
                     (set! felicidad(- felicidad 1))
-                    (printf "\nNecesito ir al baño, no me siento muy bien.")
+                    (printf "~nNecesito ir al baño, no me siento muy bien.")
                     (set! necesitaElBaño true))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
@@ -169,7 +154,7 @@
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
                     (set! felicidad(- felicidad 1))
-                    (printf "\nNecesito curarme, me duele la cabeza."))
+                    (printf "~nNecesito curarme, me duele la cabeza."))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
 #|-------------------------------------------------------------------------------------------------|#
@@ -183,7 +168,7 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (set! felicidad (+ felicidad 3))
              void)
-         (display "\nEstoy sano.")
+         (display "~nEstoy sano")
          (set! estaEnfermo false)
          (sumaContadores accion)))
 #|-------------------------------------------------------------------------------------------------|#
@@ -198,55 +183,43 @@
            (begin
              (if (boolean=? mostrarmenu #f)
                  (begin
-                   (printf "\n
-El estado actual de tu tamagotchi es: \n")
-                   (display "
-felicidad:
-╔══════════╗
-║")
-                   (printfNVeces "█" felicidad)
-                   (printfNVeces " " (- 10 felicidad))
- (display "║
-╚══════════╝ ")
-                   ;(display felicidad)
                    (printf "~n")
-                   (display "comida: ")
-                   (display (vector-ref cuentaAcciones 0))
-                   (printf "~n")
-                   (display "juego: ")
-                   (display (vector-ref cuentaAcciones 1))
-                   (printf "~n")
-                   (display "musica: ")
-                   (display (vector-ref cuentaAcciones 2))
-                   (printf "~n")
-                   (display "baño: ")
-                   (display (vector-ref cuentaAcciones 3))
-                   (display "\n \n
-╔════════════════════════╗
-║                        ║
-║      TAMAGOTCHI        ║
-║                        ║
-║         MENU           ║
-║                        ║
-║1. Comer                ║
-║2. jugar                ║
-║3. Escuchar música      ║
-║4. Ir al baño           ║
-║5. Curar                ║
-║6. Salir                ║
-║                        ║
-╚════════════════════════╝\n")
-                   ;(set! mostrarmenu #t)
-                 )
-                 void
-             )
+                   (printf "~n******************~n")
+                   (printf "****TAMAGOTCHI****~n")
+                   (printf "******************~n")
+                   (printf "*******MENU*******~n")
+                   (printf "******************~n")
+                   (set! mostrarmenu #t))
+                 void)
              
-
+             (printf "el estado actual de tu tamagotchi es: ~n")
+             
+             (display "felicidad: ")
+             (display felicidad)
+             (printf "~n")
+             (display "comida: ")
+             (display (vector-ref cuentaAcciones 0))
+             (printf "~n")
+             (display "juego: ")
+             (display (vector-ref cuentaAcciones 1))
+             (printf "~n")
+             (display "musica: ")
+             (display (vector-ref cuentaAcciones 2))
+             (printf "~n")
+             (display "baño: ")
+             (display (vector-ref cuentaAcciones 3))
              
              
              
              
-             (begin (set! accion (- (read) 1))
+             (begin (printf "~nAcciones disponibles:~n")
+                    (printf "1. Comer~n")
+                    (printf "2. jugar~n")
+                    (printf "3. Escuchar música~n")
+                    (printf "4. Ir al baño~n")
+                    (printf "5. Curar~n")
+                    (printf "6. salir~n")
+                    (set! accion (- (read) 1))
                     (cond
                       [(= 0 accion) (begin (comer)
                                            (menu))]
@@ -261,18 +234,7 @@ felicidad:
                       [(= 5 accion) (begin (cerrar 5))]
                       [else (begin
                               (printf "no entiendo que dices")
-                              (menu)
-                            )
-                      ]
-                    )
-             )
-           )
-       )
-     )
+                              (menu))])))))
      ;Tras cada acción se debe mostrar el nivel de felicidad.
-    )
-    (menu)
-  )
-)
-
+     )(menu)))
 (tamagotchi)
