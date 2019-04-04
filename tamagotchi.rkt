@@ -13,14 +13,13 @@
 
   Fecha creación: 2019/04/01
   Fecha última modificación: 2019/04/04
-  Versión: 0.1.2.1
+  Versión: 0.1.3
 |#
 
 (define (tamagotchi)
   (local
     (
 ;                         Variables
-     (define accs (vector "comer" "jugar" "musica" "baño" "curar"))
      (define cuentaAcciones (make-vector 5 0))
      (define accion 0)
      (define felicidad 3)
@@ -29,10 +28,32 @@
      (define hambre 3)
      (define higiene 7)
      (define vejiga 7)
-     (define mensaje "Hola!")
+     (define mensaje1 "¡Hola!")
+     (define mensaje2 "¡Gusto en conocerte!")
      (define causaDeMuerte accion)
      (define estaEnfermo false)
      (define necesitaElBaño false)
+     (define bienvenida true)
+
+;                         Gatos
+     (define Gbienvenida1 "
+
+  /)    |\\___/|  ")
+     (define Gbienvenida2 "
+ ((    _|  o o|. ")
+     (define Gbienvenida3 "
+╔═══════)))═══)))════════════════════════╗")
+     (define Gnormal1 "
+
+       /\\_/\\
+      ( o.o )  ")
+     (define Gnormal2 "
+       > ^ <   ")
+     (define Gmuerto "
+
+       /\\_/\\
+      ( x.x )  
+       > ^ <   ")
      
 #|                        Funciones
    printfNveces:
@@ -158,6 +179,7 @@
            [(eq? num 5) (display "\nHas abandonado a tu mascota.")]
            [else void]
          )
+         (display Gmuerto)
        )
      )
      #|-------------------------------------------------------------------------------------------------|#
@@ -166,13 +188,17 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
                (felicidad+ 1)
-               (set! mensaje "Buena comida."))
+               (set! mensaje1 "¡Buena comida!")
+             )
              (if (= (vector-ref cuentaAcciones accion) 1)
-                 (set! mensaje "Estoy satisfecho.")
+                 (begin
+                   (set! mensaje1 "Estoy satisfecho.")
+                 )
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
                        (set! felicidad(- felicidad 1))
-                       (set! mensaje "Necesito ir al baño, no me siento muy bien.")
+                       (set! mensaje1 "Necesito ir al baño,")
+                       (set! mensaje2 "no me siento muy bien :S")
                        (set! necesitaElBaño true))
                      (set! causaDeMuerte accion)
                  )
@@ -190,14 +216,16 @@
           (= (vector-ref cuentaAcciones accion) 0)
           (begin 
             (felicidad+ 2)
-            (set! mensaje "Que divertido."))
+            (set! mensaje1 "¡YAY!")
+            (set! mensaje2 "¡Qué divertido!"))
           (if (= (vector-ref cuentaAcciones accion) 1)
               (begin
                 (felicidad+ 1)
-                (set! mensaje "Estoy cansado."))
+                (set! mensaje1 "Estoy cansado...")
+              )
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
-                    (set! mensaje "Tengo hambre.")
+                    (set! mensaje1 "¡Tengo hambre!")
                     (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
@@ -208,15 +236,18 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
                (felicidad+ 2)
-               (set! mensaje "Tiene buen ritmo."))
+               (set! mensaje1 "¡Woo!")
+               (set! mensaje2 "Tiene buen ritmo"))
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
                    (felicidad+ 1)
-                   (set! mensaje "Estoy satisfecho."))
+                   (set! mensaje1 "Estuvo bien")
+                 )
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
                        (set! felicidad(- felicidad 1))
-                       (set! mensaje "Necesito curarme, me duele la cabeza."))
+                       (set! mensaje1 "Me duele la cabeza")
+                     )
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)
          )
@@ -229,14 +260,14 @@
           (= (vector-ref cuentaAcciones accion) 0)
           (begin
             (felicidad+ 2)
-            (set! mensaje "Ya estoy limpio"))
+            (set! mensaje1 "Ya estoy limpio"))
           (if (= (vector-ref cuentaAcciones accion) 1)
-              (set! mensaje "Estoy satisfecho")
+              (set! mensaje1 "Estoy satisfecho")
               (if (= (vector-ref cuentaAcciones accion)2)
                   (begin
                     (set! felicidad (- felicidad 1))
                     (set! estaEnfermo #t)
-                    (set! mensaje "Tengo gripa, cúrame"))
+                    (set! mensaje1 "Tengo gripa, cúrame"))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
      #|-------------------------------------------------------------------------------------------------|#
@@ -246,7 +277,7 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (felicidad+ 3)
              void)
-         (set! mensaje "Estoy sano.")
+         (set! mensaje1 "Estoy sano.")
          (set! estaEnfermo false)
          (sumaContadores accion)))
      #|-------------------------------------------------------------------------------------------------|#
@@ -259,7 +290,8 @@
                (= felicidad 0))
            (cerrar causaDeMuerte)
            (begin
-             (if (boolean=? mostrarmenu #f)
+             (if bienvenida
+                 void
                  (begin
                    (printf "\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 ╔════════════════════════════════════════╗
@@ -292,14 +324,32 @@
                    (printf "  ")
                    (display "baño: ")
                    (display (vector-ref cuentaAcciones 3))
-                   (display"
-
- /\\_/\\
-( o.o ) < ") (display mensaje) (display "1
- > ^ <
-")
+                 )
+             )
+                   (begin
+                   (cond
+                     [bienvenida (begin
+                                   (display Gbienvenida1)
+                                   (display mensaje1)
+                                   (display Gbienvenida2)
+                                   (display mensaje2)
+                                   (set! mensaje2 " ")
+                                   (display Gbienvenida3)
+                                   (set! bienvenida false)
+                                 )
+                     ]
+                     [else (begin
+                             (display Gnormal1)
+                             (display mensaje1)
+                             (display Gnormal2)
+                             (display mensaje2)
+                             (display "\n
+╔════════════════════════════════════════╗")
+                           )
+                     ]
+                   )
+                   
                    (display "
-╔════════════════════════════════════════╗
 ║           TAMAGOTCHI    MENU           ║
 ║                                        ║
 ║   1. Comer        4. Ir al baño        ║
@@ -309,8 +359,6 @@
 ╚════════════════════════════════════════╝\n")
                    ;(set! mostrarmenu #t)
                    )
-                 void
-                 )
              (set! accion (- (read) 1))
              (cond
                [(= 0 accion) (begin (comer)
@@ -325,7 +373,7 @@
                                     (menu))]
                [(= 5 accion) (begin (cerrar 5))]
                [else (begin
-                       (printf "no entiendo que dices")
+                       (set! mensaje1 "No te comprendo")
                        (menu))]
                )
              )
