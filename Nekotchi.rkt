@@ -186,10 +186,6 @@
              void
              (vector-set! cuentaAcciones 6 (- (vector-ref cuentaAcciones 6) 1))
          )
-         (if (= (vector-ref cuentaAcciones 7) 0)
-             void
-             (vector-set! cuentaAcciones 7 (- (vector-ref cuentaAcciones 7) 1))
-         )
        )
      )
 
