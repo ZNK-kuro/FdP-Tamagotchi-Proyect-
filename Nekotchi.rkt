@@ -319,12 +319,11 @@
          (printf "\nEres un mal amo.")
          (cond
            [(eq? num 0) (display "\nTu mascota murió por que su estómago explotó.")]
-           [(eq? num 1) (display "\nTu mascota murió de cansancio.")]
-           [(eq? num 2) (display "\nTu mascota murió por derrame cerebral.")]
-           [(eq? num 3) (display "\nTu mascota murió por falla renal.")]
-           [(eq? num 4) (display "\nTu mascota murió de ???")]
-           [(eq? num 5) (display "\nTu mascota murió de ???")]
-           [(eq? num 6) (display "\nTu mascota murió de ???")]
+           [(eq? num 1) (display "\nTu mascota murió por falla renal")]
+           [(eq? num 2) (display "\nTu mascota murió de cansancio")]
+           [(eq? num 3) (display "\nTu mascota murió por ??? (dormir)")]
+           [(eq? num 4) (display "\nTu mascota murió de ??? (bañar)")]
+           [(eq? num 5) (display "\nTu mascota murió de por derrame cerebral")]
            [(eq? num 7) (display "\nHas abandonado a tu mascota.")]
            [else void]
          )
@@ -344,7 +343,7 @@
              (if bienvenida
                  void
                  (begin
-                   (printf "\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+                   (display "\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 ╔════════════════════════════════════════╗
 ║                 ESTADO                 ║
 ║                                        ║
@@ -399,6 +398,7 @@
                                        (display mensaje1)
                                        (display Gnormal2-2)
                                        (display mensaje2)
+                                       (set! mensaje2 " ")
                                        (display Gnormal2-3)
                                      )
                      ]
@@ -407,6 +407,7 @@
                              (display mensaje1)
                              (display Gnormal1-2)
                              (display mensaje2)
+                             (set! mensaje2 " ")
                              (display "
 ╔════════════════════════════════════════╗")
                            )
