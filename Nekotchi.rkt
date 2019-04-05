@@ -398,7 +398,7 @@
                                    (set! bienvenida false)
                                  )
                      ]
-                     [(eq? accion 1) (begin
+                     [(eq? accion 2) (begin
                                        (display Gnormal2-1)
                                        (display mensaje1)
                                        (display Gnormal2-2)
