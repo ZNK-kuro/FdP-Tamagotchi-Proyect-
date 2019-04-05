@@ -23,11 +23,11 @@
      (define cuentaAcciones (make-vector 7 0))
      (define accion 0)
      (define felicidad 3)
-     (define energia 7)
+     (define energia 6)
      (define diversion 4)
      (define hambre 3)
      (define higiene 7)
-     (define vejiga 7)
+     (define vejiga 5)
      (define mensaje1 "¡Hola!")
      (define mensaje2 "¡Gusto en conocerte!")
      (define causaDeMuerte 0)
@@ -37,7 +37,6 @@
 
 ;                         Gatos
      (define Gbienvenida1 "
-
   /)    |\\___/|  ")
      (define Gbienvenida2 "
  ((    _|  o o|. ")
@@ -45,7 +44,6 @@
 ╔═══════)))═══)))════════════════════════╗")
      
      (define Gnormal1-1 "
-
        /\\_/\\
       ( o.o )  ")
      (define Gnormal1-2 "
@@ -59,7 +57,6 @@
      (define Gnormal2-3 "
 ╔═══{_}═══{_}════════════════════════════╗")
      (define Gmuerto "
-
        /\\_/\\
       ( x.x )  
        > ^ <   ")
@@ -69,7 +66,7 @@
      Imprime un mensaje N numero de veces.|#
      (define (printfNVeces msj N)
        (cond
-         [(eq? N 0) void]
+         [(<= N 0) void]
          [else (begin
                  (printf msj)
                  (printfNVeces msj (- N 1))
@@ -90,8 +87,8 @@
        )
      )
      
-#| salud+:
-     Suma N a la salud pero no permite que el valor de salud supere a 10.|#
+#| energia+:
+     Suma N a la energia pero no permite que el valor de energia supere a 10.|#
      (define (energia+ N)
        (begin
          (set! energia (+ energia N))
@@ -122,7 +119,10 @@
          (set! hambre (+ hambre N))
          (if (> hambre 10)
              (set! hambre 10)
-             void
+             (if (<= hambre 0)
+                 (set! hambre 0)
+                 void
+             )
          )
        )
      )
@@ -158,6 +158,7 @@
          (if (= (vector-ref cuentaAcciones 6) 4) ;Esto evita que el contador de curar sea mayor a 4.
              void
              (vector-set! cuentaAcciones accion (+ (vector-ref cuentaAcciones accion) 2)))
+         
          (if (= (vector-ref cuentaAcciones 0) 0)
              void
              (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1))
@@ -198,15 +199,18 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
                (felicidad+ 1)
+               (set! hambre (- hambre 2))
                (set! mensaje1 "¡Buena comida!")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
                    (set! mensaje1 "Estoy satisfecho.")
+                   (set! hambre (- hambre 1))
                  )
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
                        (set! felicidad(- felicidad 1))
+                       (set! hambre (- hambre 1))
                        (set! mensaje1 "Necesito ir al baño,")
                        (set! mensaje2 "no me siento muy bien :S")
                        (set! necesitaElBaño true))
@@ -226,23 +230,26 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin
                (felicidad+ 2)
+               (set! vejiga (- vejiga 2))
                (set! mensaje1 "Ya estoy limpio")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
-                 (set! mensaje1 "Estoy satisfecho")
+                 (begin
+                   (set! mensaje1 "Estoy satisfecho")
+                   (- vejiga 1))
                  (if (= (vector-ref cuentaAcciones accion)2)
                      (begin
                        (set! felicidad (- felicidad 1))
                        (set! estaEnfermo #t)
-                       (set! mensaje1 "Tengo gripa, cúrame")
-                     )
+                       (set! vejiga (- vejiga 2))
+                       (set! mensaje1 "Tengo gripa, cúrame"))
                      (set! causaDeMuerte accion)
+                     )
                  )
              )
-         )
          (sumaContadores accion)
+         )
        )
-     )
 #| jugar:
      |#
      (define (jugar)
@@ -252,24 +259,47 @@
           (= (vector-ref cuentaAcciones accion) 0)
           (begin 
             (felicidad+ 2)
+            (diversion+ 2)
+            (hambre+ 1)
             (set! mensaje1 "¡YAY!")
             (set! mensaje2 "¡Qué divertido!"))
           (if (= (vector-ref cuentaAcciones accion) 1)
               (begin
                 (felicidad+ 1)
-                (set! mensaje1 "Estoy cansado...")
-              )
+                (diversion+ 1)
+                (hambre+ 2)
+                (set! mensaje1 "Estoy cansado..."))
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
                     (set! mensaje1 "¡Tengo hambre!")
+                    (set! diversion (- diversion 1))
+                    (hambre+ 3)
                     (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
-
+     
 #| dormir:
      |#
      (define (dormir)
-       void
+       (begin
+         (if (= (vector-ref cuentaAcciones accion) 0)
+             (begin
+               (felicidad+ 1)
+               (energia+ 2)
+               (set! mensaje1 "¡que buena siesta!"))
+             (if (= (vector-ref cuentaAcciones accion) 1)
+                 (begin
+                   (felicidad+ 0)
+                   (energia+ 1)
+                   (set! mensaje1 "¡que bueno descansar!"))
+                 (if (= (vector-ref cuentaAcciones accion) 2)
+                     (begin
+                       (felicidad+ -1)
+                       (set! mensaje1 "¡no quiero dormir más!"))
+                     (set! causaDeMuerte accion))))
+         (sumaContadores accion)
+         
+         )
      )
 #| bañar:
      |#
@@ -318,12 +348,13 @@
        (begin
          (printf "\nEres un mal amo.")
          (cond
-           [(eq? num 0) (display "\nTu mascota murió por que su estómago explotó.")]
-           [(eq? num 1) (display "\nTu mascota murió por falla renal")]
-           [(eq? num 2) (display "\nTu mascota murió de cansancio")]
-           [(eq? num 3) (display "\nTu mascota murió por ??? (dormir)")]
-           [(eq? num 4) (display "\nTu mascota murió de ??? (bañar)")]
-           [(eq? num 5) (display "\nTu mascota murió de por derrame cerebral")]
+           [(eq? num 0) (display "\nTu mascota murió por que gastritis.")]
+           [(eq? num 1) (display "\nTu mascota murió de falla renal.")]
+           [(eq? num 2) (display "\nTu mascota murió de cansancio.")]
+           [(eq? num 3) (display "\nTu mascota murió en coma.")]
+           [(eq? num 4) (display "\nTu mascota murió de gripa")]
+           [(eq? num 5) (display "\nTu mascota murió de derrame cerebral.")]
+           [(eq? num 6) (display "\nTu mascota murió de aburrimiento")]
            [(eq? num 7) (display "\nHas abandonado a tu mascota.")]
            [else void]
          )
@@ -333,11 +364,18 @@
 #|-------------------------------------------------------------------------------------------------|#
      
      (define (menu)
-       (if (or (=(vector-ref cuentaAcciones 0) 4)
-               (=(vector-ref cuentaAcciones 1) 4)
-               (=(vector-ref cuentaAcciones 2) 4)
-               (=(vector-ref cuentaAcciones 3) 4)
-               (= felicidad 0))
+       (if (or (>=(vector-ref cuentaAcciones 0) 4)
+               (>=(vector-ref cuentaAcciones 1) 4)
+               (>=(vector-ref cuentaAcciones 2) 4)
+               (>=(vector-ref cuentaAcciones 3) 4)
+               (>=(vector-ref cuentaAcciones 4) 4)
+               (>=(vector-ref cuentaAcciones 5) 4)
+               (<= felicidad 0)
+               (<= energia 0)
+               (<= diversion 0)
+               (>= hambre 10)
+               (<= higiene 0)
+               )
            (cerrar causaDeMuerte)
            (begin
              (if bienvenida
