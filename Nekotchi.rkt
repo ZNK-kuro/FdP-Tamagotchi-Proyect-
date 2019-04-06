@@ -20,21 +20,22 @@
   (local
     (
 ;                         Variables
-     (define cuentaAcciones (make-vector 7 0))
-     (define accion 0)
-     (define felicidad 3)
-     (define energia 6)
-     (define diversion 4)
-     (define hambre 3)
-     (define higiene 7)
-     (define vejiga 5)
-     (define mensaje1 "¡Hola!")
-     (define mensaje2 "¡Gusto en conocerte!")
-     (define causaDeMuerte 0)
      (define estaEnfermo false)
      (define necesitaElBaño false)
      (define bienvenida true)
-
+     (define accion 0)
+     ;(define felicidad 3)
+     ;(define energia 6)
+     ;(define diversion 4)
+     ;(define comida 3)
+     ;(define higiene 7)
+     ;(define vejiga 5)
+     (define mensaje1 "¡Hola!")
+     (define mensaje2 "¡Gusto en conocerte!")
+     (define causaDeMuerte 0)
+     (define cuentaAcciones (make-vector 7 0))
+     (define barrasDeEstado (make-vector 6 0))
+     
 ;                         Gatos
      (define Gbienvenida1 "
   /)    |\\___/|  ")
@@ -74,7 +75,21 @@
          ]
        )
      )
-
+#| atributo+:
+     Recibe la posicion de un atributo en el vector barrasDeEstado y suma N al atributo pero no permite que el valor supere a 10 ó baje de 0.|#
+     (define (atributo+ posAtributo N)
+       (begin
+         (vector-set! barrasDeEstado posAtributo (+ (vector-ref barrasDeEstado posAtributo) N))
+         (if (> (vector-ref barrasDeEstado posAtributo) 10)
+             (vector-set! barrasDeEstado posAtributo 10)
+             (if (< (vector-ref barrasDeEstado posAtributo) 0)
+                 (vector-set! barrasDeEstado posAtributo 0)
+                 void
+             )
+         )
+       )
+     )
+#|     
 #| felicidad+:
      Suma N a la felicidad pero no permite que el valor de felicidad supere a 10.|#
      (define (felicidad+ N)
@@ -82,7 +97,10 @@
          (set! felicidad (+ felicidad N))
          (if (> felicidad 10)
              (set! felicidad 10)
-             void
+             (if (<= felicidad 0)
+                 (set! felicidad 0)
+                 void
+             )
          )
        )
      )
@@ -93,8 +111,10 @@
        (begin
          (set! energia (+ energia N))
          (if (> energia 10)
-             (set! energia 10)
-             void
+             (if (<= energia 0)
+                 (set! energia 0)
+                 void
+             )
          )
        )
      )
@@ -106,19 +126,22 @@
          (set! diversion (+ diversion N))
          (if (> diversion 10)
              (set! diversion 10)
-             void
+             (if (<= diversion 0)
+                 (set! diversion 0)
+                 void
+             )
          )
        )
      )
 
 
-#| hambre+:
-     Suma N a la hambre pero no permite que el valor de hambre supere a 10.|#
-     (define (hambre+ N)
+#| comida+:
+     Suma N a la comida pero no permite que el valor de comida supere a 10.|#
+     (define (comida+ N)
        (begin
-         (set! hambre (+ hambre N))
-         (if (> hambre 10)
-             (set! hambre 10)
+         (set! comida (+ comida N))
+         (if (> comida 10)
+             (set! comida 10)
              (if (<= hambre 0)
                  (set! hambre 0)
                  void
@@ -134,7 +157,10 @@
          (set! higiene (+ higiene N))
          (if (> higiene 10)
              (set! higiene 10)
-             void
+             (if (<= higiene 0)
+                 (set! higiene 0)
+                 void
+             )
          )
        )
      )
@@ -146,10 +172,13 @@
          (set! vejiga (+ vejiga N))
          (if (> vejiga 10)
              (set! vejiga 10)
-             void
+             (if (<= vejiga 0)
+                 (set! vejiga 0)
+                 void
+             )
          )
        )
-     )
+     )      |#
      
 #| SumaContadores:
      Suma en 1 al contador de la acción que se ejecuta y le resta 1 a las demás.|#
@@ -198,19 +227,19 @@
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
-               (felicidad+ 1)
-               (set! hambre (- hambre 2))
+               (atributo+ 0 1) ;felicidad + 1
+               (atributo+ 3 2) ;comida + 2
                (set! mensaje1 "¡Buena comida!")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
                    (set! mensaje1 "Estoy satisfecho.")
-                   (set! hambre (- hambre 1))
+                   (atributo+ 3 1) ;comida + 1
                  )
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
-                       (set! felicidad(- felicidad 1))
-                       (set! hambre (- hambre 1))
+                       (atributo+ 0 -1) ;felicidad - 1
+                       (atributo+ 3 1)  ;comida + 1
                        (set! mensaje1 "Necesito ir al baño,")
                        (set! mensaje2 "no me siento muy bien :S")
                        (set! necesitaElBaño true))
@@ -229,27 +258,29 @@
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin
-               (felicidad+ 2)
-               (set! vejiga (- vejiga 2))
+               (atributo+ 0 2) ;felicidad + 2
+               (atributo+ 5 2) ;vejiga + 2
                (set! mensaje1 "Ya estoy limpio")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
                    (set! mensaje1 "Estoy satisfecho")
-                   (- vejiga 1))
+                   (atributo+ 5 1) ;vejiga + 1
+                 )
                  (if (= (vector-ref cuentaAcciones accion)2)
                      (begin
-                       (set! felicidad (- felicidad 1))
+                       (atributo+ 0 -1) ;felicidad - 1
                        (set! estaEnfermo #t)
-                       (set! vejiga (- vejiga 2))
-                       (set! mensaje1 "Tengo gripa, cúrame"))
-                     (set! causaDeMuerte accion)
+                       (atributo+ 5 2) ;vejiga + 2
+                       (set! mensaje1 "Tengo gripa, cúrame")
                      )
+                     (set! causaDeMuerte accion)
                  )
              )
-         (sumaContadores accion)
          )
+         (sumaContadores accion)
        )
+     )
 #| jugar:
      |#
      (define (jugar)
@@ -258,22 +289,22 @@
          (if
           (= (vector-ref cuentaAcciones accion) 0)
           (begin 
-            (felicidad+ 2)
-            (diversion+ 2)
-            (hambre+ 1)
+            (atributo+ 0 2) ;felicidad + 2
+            (atributo+ 2 2) ;diversion + 2
+            (atributo+ 3 -1) ;comida - 1
             (set! mensaje1 "¡YAY!")
             (set! mensaje2 "¡Qué divertido!"))
           (if (= (vector-ref cuentaAcciones accion) 1)
               (begin
-                (felicidad+ 1)
-                (diversion+ 1)
-                (hambre+ 2)
+                (atributo+ 0 1) ;felicidad + 1
+                (atributo+ 2 1) ;diversion + 1
+                (atributo+ 3 -2) ;comida - 2
                 (set! mensaje1 "Estoy cansado..."))
               (if (= (vector-ref cuentaAcciones accion) 2)
                   (begin
                     (set! mensaje1 "¡Tengo hambre!")
-                    (set! diversion (- diversion 1))
-                    (hambre+ 3)
+                    (atributo+ 2 -1) ;diversion - 1
+                    (atributo+ 3 -3) ;comida - 3
                     (vector-set! cuentaAcciones 0 (- (vector-ref cuentaAcciones 0) 1)))
                   (set! causaDeMuerte accion))))
          (sumaContadores accion)))
@@ -284,17 +315,17 @@
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin
-               (felicidad+ 1)
-               (energia+ 2)
+               (atributo+ 0 1) ;felicidad + 1
+               (atributo+ 1 2) ;energia + 2
                (set! mensaje1 "¡que buena siesta!"))
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
-                   (felicidad+ 0)
-                   (energia+ 1)
+                   
+                   (atributo+ 1 1) ;energia + 1
                    (set! mensaje1 "¡que bueno descansar!"))
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
-                       (felicidad+ -1)
+                       (atributo+ 0 -1) ;felicidad - 1
                        (set! mensaje1 "¡no quiero dormir más!"))
                      (set! causaDeMuerte accion))))
          (sumaContadores accion)
@@ -306,22 +337,25 @@
      (define (bañar)
        void
      )
+
+#| musica:
+     |#
      ;Escuchar música una vez aumenta en 2 la felicidad, otra vez le aumenta en 1, y una tercera vez disminuye en 1, lo enferma, debe curarlo.
      (define (musica)
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
-               (felicidad+ 2)
+               (atributo+ 0 2) ;felicidad + 2
                (set! mensaje1 "¡Woo!")
                (set! mensaje2 "Tiene buen ritmo"))
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
-                   (felicidad+ 1)
+                   (atributo+ 0 1) ;felicidad + 1
                    (set! mensaje1 "Estuvo bien")
                  )
                  (if (= (vector-ref cuentaAcciones accion) 2)
                      (begin
-                       (set! felicidad(- felicidad 1))
+                       (atributo+ 0 -1) ;felicidad - 1
                        (set! mensaje1 "Me duele la cabeza")
                      )
                      (set! causaDeMuerte accion)
@@ -336,7 +370,7 @@
      (define (curar)
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
-             (felicidad+ 3)
+             (atributo+ 0 3) ;felicidad + 3
              void)
          (set! mensaje1 "Estoy sano.")
          (set! estaEnfermo false)
@@ -364,18 +398,20 @@
 #|-------------------------------------------------------------------------------------------------|#
      
      (define (menu)
-       (if (or (>=(vector-ref cuentaAcciones 0) 4)
-               (>=(vector-ref cuentaAcciones 1) 4)
-               (>=(vector-ref cuentaAcciones 2) 4)
-               (>=(vector-ref cuentaAcciones 3) 4)
-               (>=(vector-ref cuentaAcciones 4) 4)
-               (>=(vector-ref cuentaAcciones 5) 4)
-               (<= felicidad 0)
-               (<= energia 0)
-               (<= diversion 0)
-               (>= hambre 10)
-               (<= higiene 0)
-               )
+       (if (or (> (vector-ref cuentaAcciones 0) 3)
+               (> (vector-ref cuentaAcciones 1) 3)
+               (> (vector-ref cuentaAcciones 2) 3)
+               (> (vector-ref cuentaAcciones 3) 3)
+               (> (vector-ref cuentaAcciones 4) 3)
+               (> (vector-ref cuentaAcciones 5) 3)
+               
+               (< (vector-ref barrasDeEstado 0) 1)
+               (< (vector-ref barrasDeEstado 1) 1)
+               (< (vector-ref barrasDeEstado 2) 1)
+               (< (vector-ref barrasDeEstado 3) 1)
+               (< (vector-ref barrasDeEstado 4) 1)
+               (< (vector-ref barrasDeEstado 5) 1)
+           )
            (cerrar causaDeMuerte)
            (begin
              (if bienvenida
@@ -387,17 +423,20 @@
 ║                                        ║
 ║    Felicidad              Energía      ║
 ║   ╔══════════╗          ╔══════════╗   ║
-║   ║") (printfNVeces "█" felicidad) (printfNVeces " " (- 10 felicidad)) (display "║          ║") (printfNVeces "█" energia) (printfNVeces " " (- 10 energia)) (display "║   ║
+║   ║") (printfNVeces "█" (vector-ref barrasDeEstado 0)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 0)))
+     (display "║          ║") (printfNVeces "█" (vector-ref barrasDeEstado 1)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 1))) (display "║   ║
 ║   ╚══════════╝          ╚══════════╝   ║
 ║                                        ║
-║    Diversión               Hambre      ║
+║    Diversión               Comida      ║
 ║   ╔══════════╗          ╔══════════╗   ║
-║   ║") (printfNVeces "█" diversion) (printfNVeces " " (- 10 diversion)) (display "║          ║") (printfNVeces "█" hambre) (printfNVeces " " (- 10 hambre)) (display "║   ║
+║   ║") (printfNVeces "█" (vector-ref barrasDeEstado 2)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 2)))
+     (display "║          ║") (printfNVeces "█" (vector-ref barrasDeEstado 3)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 3))) (display "║   ║
 ║   ╚══════════╝          ╚══════════╝   ║
 ║                                        ║
 ║     Higiene                Vejiga      ║
 ║   ╔══════════╗          ╔══════════╗   ║
-║   ║") (printfNVeces "█" higiene) (printfNVeces " " (- 10 higiene)) (display "║          ║") (printfNVeces "█" vejiga) (printfNVeces " " (- 10 vejiga)) (display "║   ║
+║   ║") (printfNVeces "█" (vector-ref barrasDeEstado 4)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 4)))
+     (display "║          ║") (printfNVeces "█" (vector-ref barrasDeEstado 5)) (printfNVeces " " (- 10 (vector-ref barrasDeEstado 5))) (display "║   ║
 ║   ╚══════════╝          ╚══════════╝   ║
 ╚════════════════════════════════════════╝
 ")
@@ -419,48 +458,48 @@
 
                  )
              )
-                   (begin
-                   (cond
-                     [bienvenida (begin
-                                   (display Gbienvenida1)
+             (begin
+               (cond
+                 [bienvenida (begin
+                               (display Gbienvenida1)
+                               (display mensaje1)
+                               (display Gbienvenida2)
+                               (display mensaje2)
+                               (set! mensaje2 " ")
+                               (display Gbienvenida3)
+                               (set! bienvenida false)
+                             )
+                 ]
+                 [(eq? accion 2) (begin
+                                   (display Gnormal2-1)
                                    (display mensaje1)
-                                   (display Gbienvenida2)
+                                   (display Gnormal2-2)
                                    (display mensaje2)
                                    (set! mensaje2 " ")
-                                   (display Gbienvenida3)
-                                   (set! bienvenida false)
+                                   (display Gnormal2-3)
                                  )
-                     ]
-                     [(eq? accion 2) (begin
-                                       (display Gnormal2-1)
-                                       (display mensaje1)
-                                       (display Gnormal2-2)
-                                       (display mensaje2)
-                                       (set! mensaje2 " ")
-                                       (display Gnormal2-3)
-                                     )
-                     ]
-                     [else (begin
-                             (display Gnormal1-1)
-                             (display mensaje1)
-                             (display Gnormal1-2)
-                             (display mensaje2)
-                             (set! mensaje2 " ")
-                             (display "
+                 ]
+                 [else (begin
+                         (display Gnormal1-1)
+                         (display mensaje1)
+                         (display Gnormal1-2)
+                         (display mensaje2)
+                         (set! mensaje2 " ")
+                         (display "
 ╔════════════════════════════════════════╗")
-                           )
-                     ]
-                   )
-                   
-                   (display "
+                       )
+                 ]
+               )    
+               (display "
 ║          NEKOTCHI    MENU              ║
 ║                                        ║
 ║   1. Comer        2. Ir al baño        ║
 ║   3. Jugar        4. Dormir            ║
 ║   5. Bañar        6.Escuchar música    ║
 ║   7. Curar        8. Salir             ║
-╚════════════════════════════════════════╝\n")
-                   )
+╚════════════════════════════════════════╝\n"
+               )
+             )
              (set! accion (- (read) 1))
              (cond
                [(= 0 accion) (begin (comer)  (menu))]
@@ -481,9 +520,29 @@
        )
      )
      ;Tras cada acción se debe mostrar el nivel de felicidad.
+    )
+    (begin
+       (vector-set! barrasDeEstado 0 3) ;felicidad
+       (vector-set! barrasDeEstado 1 6) ;energia
+       (vector-set! barrasDeEstado 2 4) ;diversion
+       (vector-set! barrasDeEstado 3 4) ;comida
+       (vector-set! barrasDeEstado 4 7) ;higiene
+       (vector-set! barrasDeEstado 5 6) ;vejiga
+       (menu)
      )
-    (menu)
   )
 )
-
+(define (jugar?)
+  (begin
+    (printf "\nVolver a jugar?\n1. Sí\n")
+    (if (eq? (read) 1)
+        (begin
+          (nekotchi)
+          (jugar?)
+        )
+        "Saliste."
+    )
+  )
+)
 (nekotchi)
+(jugar?)
