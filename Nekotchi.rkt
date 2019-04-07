@@ -212,6 +212,7 @@
              (begin
                (atributo+ 0 2) ;felicidad + 2
                (atributo+ 5 2) ;vejiga + 2
+               (atributo+ 4 -1) ;higiene -1
                (set! mensaje1 "Ya estoy limpio")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
@@ -223,6 +224,7 @@
                      (begin
                        (atributo+ 0 -1) ;felicidad - 1
                        (set! estaEnfermo true)
+                       (atributo+ 4 -2) ;higiene -2
                        (atributo+ 5 2) ;vejiga + 2
                        (set! mensaje1 "Tengo gripa, cúrame")
                      )
@@ -297,7 +299,26 @@
 #| bañar:
      |#
      (define (bañar)
-       void
+       (begin
+         (if (= (vector-ref cuentaAcciones accion) 0)
+             (begin
+               (atributo+ 0 -1) ;felicidad - 1
+               (atributo+ 4 2) ;higiene +2
+               (atributo+ 3 -1) ;comida -1
+               (set! mensaje1 "¡no me gusta el agua!"))
+             (if (= (vector-ref cuentaAcciones accion) 1)
+                 (begin
+                    (atributo+ 0 -2) ;felicidad -2
+                    (atributo+ 4 1) ;higiene + 1
+                    (atributo+ 3 -2) ;comida -2
+                    (set! mensaje1 "¡achu!"))
+                 (if (= (vector-ref cuentaAcciones accion) 2)
+                     (begin
+                       (atributo+ 4 -1) ;higiene -1
+                       (atributo+ 3 -1) ;comida - 1
+                       (set! mensaje1 "¡tengo gripa, cúrame!"))
+                     (set! causaDeMuerte accion))))
+         (sumaContadores accion))
      )
 
 #| musica:
