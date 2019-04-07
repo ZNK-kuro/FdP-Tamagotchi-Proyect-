@@ -293,7 +293,7 @@
                  )
              )
          )
-         (sumaContadores accion)
+         (sumaContadores)
        )
      )
 #| bañar:
@@ -318,7 +318,7 @@
                        (atributo+ 3 -1) ;comida - 1
                        (set! mensaje1 "¡tengo gripa, cúrame!"))
                      (set! causaDeMuerte accion))))
-         (sumaContadores accion))
+         (sumaContadores))
      )
 
 #| musica:
@@ -346,7 +346,7 @@
                  )
              )
          )
-         (sumaContadores accion)
+         (sumaContadores)
        )
      )
 #| curar:
@@ -358,7 +358,7 @@
              void)
          (set! mensaje1 "Estoy sano")
          (set! estaEnfermo false)
-         (sumaContadores accion)
+         (sumaContadores)
        )
      )
 
