@@ -13,7 +13,7 @@
 
   Fecha creación: 2019/04/01
   Fecha última modificación: 2019/04/07
-  Versión: 0.9
+  Versión: 0.9.1
 |#
 
 (define (nekotchi)
@@ -183,16 +183,15 @@
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
-               (atributo+ 0 2)  ;felicidad + 2
-               (atributo+ 3 5)  ;comida + 5
+               (atributo+ 0 1)  ;felicidad + 1
+               (atributo+ 3 6)  ;comida + 6
                (atributo+ 5 -1) ;vejiga - 1
-               (atributo+ 4 -1) ;higiene -1
+               (atributo+ 2 1)  ;diversion + 1
                (set! mensaje1 "¡Yumi!")
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
                    (set! mensaje1 "Estoy lleno")
-                   (atributo+ 0 1) ;felicidad + 1
                    (atributo+ 3 4) ;comida + 4
                    (atributo+ 5 -1) ;vejiga - 1
                    (atributo+ 4 -1) ;higiene -1
@@ -229,8 +228,8 @@
        (begin
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin
-               (atributo+ 0 3) ;felicidad + 3
-               (atributo+ 5 5) ;vejiga + 5
+               (atributo+ 0 2) ;felicidad + 2
+               (atributo+ 5 6) ;vejiga + 6
                (atributo+ 4 -1) ;higiene -1
                (set! mensaje1 "Listo!")
              )
@@ -238,7 +237,6 @@
                  (begin
                    (set! mensaje1 "Acabé")
                    (atributo+ 5 4) ;vejiga + 4
-                   (atributo+ 0 1) ;felicidad + 1
                    (atributo+ 4 -1) ;higiene -1
                  )
                  (if (= (vector-ref cuentaAcciones accion)2)
@@ -265,8 +263,8 @@
          ;(printf (vector-ref accs 0))
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
-               (atributo+ 0 3)  ;felicidad + 3
-               (atributo+ 2 5)  ;diversion + 5
+               (atributo+ 0 2)  ;felicidad + 2
+               (atributo+ 2 6)  ;diversion + 6
                (atributo+ 1 -1) ;energia - 1
                (atributo+ 4 -1) ;higiene - 1
                (set! mensaje1 "¡YAY!")
@@ -274,7 +272,7 @@
              )
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
-                   (atributo+ 0 2)  ;felicidad + 2
+                   (atributo+ 0 2)  ;felicidad + 1
                    (atributo+ 2 4)  ;diversion + 4
                    (atributo+ 1 -1) ;energia - 1
                    (atributo+ 3 -1) ;comida - 1
@@ -308,7 +306,7 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin
                (atributo+ 0 2) ;felicidad + 2
-               (atributo+ 1 5) ;energia + 5
+               (atributo+ 1 6) ;energia + 6
                (set! mensaje1 "¡Qué buena siesta!"))
              (if (= (vector-ref cuentaAcciones accion) 1)
                  (begin
@@ -376,7 +374,7 @@
          (if (= (vector-ref cuentaAcciones accion) 0)
              (begin 
                (atributo+ 0 3) ;felicidad + 3
-               (atributo+ 2 3) ;diversion + 3
+               (atributo+ 2 4) ;diversion + 4
                (set! mensaje1 "¡Woo!")
                (set! mensaje2 "Tiene buen ritmo"))
              (if (= (vector-ref cuentaAcciones accion) 1)
