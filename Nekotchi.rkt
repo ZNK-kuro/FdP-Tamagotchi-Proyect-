@@ -13,7 +13,7 @@
 
   Fecha creación: 2019/04/01
   Fecha última modificación: 2019/04/07
-  Versión: 0.9.1
+  Versión: 1.0
 |#
 
 (define (nekotchi)
@@ -50,6 +50,7 @@
      (define noHayCura 0)
      (define necesitaElBaño false)
      (define bienvenida true)
+     (define numero? "c")
      (define accion 0)
      (define mensaje1 "¡Hola!")
      (define mensaje2 "¡Gusto en conocerte!")
@@ -551,21 +552,30 @@
 ║     7. Curar      8. Abandonar         ║
 ╚════════════════════════════════════════╝\n"   )
              )
-             (set! accion (- (read) 1))
-             (cond
-               [(= 0 accion) (begin (comer)  (menu))]
-               [(= 1 accion) (begin (baño)   (menu))]
-               [(= 2 accion) (begin (jugar)  (menu))]
-               [(= 3 accion) (begin (dormir) (menu))]
-               [(= 4 accion) (begin (bañar)  (menu))]
-               [(= 5 accion) (begin (musica) (menu))]
-               [(= 6 accion) (begin (curar)  (menu))]
-               [(= 7 accion) (cerrar 7)]
-               [else (begin
-                       (set! mensaje1 "No te comprendo")
-                       (menu)
-                     )
-               ]
+             (set! numero? (read))
+             (if (number? numero?)
+                 (begin
+                   (set! accion (- numero? 1))
+                   (cond
+                     [(= 0 accion) (begin (comer)  (menu))]
+                     [(= 1 accion) (begin (baño)   (menu))]
+                     [(= 2 accion) (begin (jugar)  (menu))]
+                     [(= 3 accion) (begin (dormir) (menu))]
+                     [(= 4 accion) (begin (bañar)  (menu))]
+                     [(= 5 accion) (begin (musica) (menu))]
+                     [(= 6 accion) (begin (curar)  (menu))]
+                     [(= 7 accion) (cerrar 7)]
+                     [else (begin
+                             (set! mensaje1 "No te comprendo")
+                             (menu)
+                           )
+                     ]
+                   )
+                 )
+                 (begin
+                   (set! mensaje1 "No te comprendo")
+                   (menu)
+                 )
              )
            )
        )
